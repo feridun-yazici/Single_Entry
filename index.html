@@ -1,27 +1,426 @@
 <!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shop-Prototyp</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bonprix - Anmelden oder Registrieren</title>
+    <!-- Google Fonts: Open Sans für eine saubere, moderne Schriftart -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
-      body, html {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        overflow: hidden;
-      }
-      iframe {
-        border: none;
-        width: 100%;
-        height: 100vh;
-      }
+        /* Grundlegende Stildefinitionen und Reset */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8; /* Heller Hintergrund für die Seite */
+            color: #333; /* Standardtextfarbe */
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased; /* Bessere Schriftglättung für Webkit-Browser */
+            -moz-osx-font-smoothing: grayscale; /* Bessere Schriftglättung für Firefox */
+        }
+
+        /* Wrapper für den gesamten Seiteninhalt, um maximale Breite und Zentrierung zu steuern */
+        .page-wrapper {
+            max-width: 450px; /* Maximale Breite wie im Bild angedeutet */
+            margin: 0 auto; /* Zentriert den Wrapper auf der Seite */
+            background-color: #fff; /* Weißer Hintergrund für den Inhalt */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); /* Dezenter Schatten */
+        }
+
+        /* Header-Bereich */
+        header {
+            display: flex;
+            justify-content: space-between; /* Logo links, Warenkorb rechts */
+            align-items: center;
+            padding: 1.5rem; /* Innenabstand im Header */
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #000;
+            text-decoration: none; /* Keine Unterstreichung für das Logo */
+        }
+
+        .shopping-bag {
+            position: relative;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shopping-bag svg {
+            width: 1.5rem; /* Größe des Warenkorb-Icons */
+            height: 1.5rem;
+        }
+
+        .shopping-bag-count {
+            position: absolute;
+            top: -0.5rem;
+            right: -0.5rem;
+            background-color: #000;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 50%; /* Runde Form für die Zahl */
+            padding: 0.1rem 0.3rem;
+            line-height: 1;
+            min-width: 1.2rem; /* Sorgt dafür, dass es auch bei einstelligen Zahlen rund bleibt */
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* Hauptinhaltsbereich (Anmelden/Registrieren) */
+        main {
+            padding: 1.5rem;
+            padding-top: 0; /* Kein zusätzlicher oberer Abstand, da der Header schon Abstand hat */
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        p.instruction {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #555;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block; /* Label über dem Eingabefeld */
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box; /* Padding wird in die Breite eingerechnet */
+            -webkit-appearance: none; /* Entfernt Standard-Browser-Styling */
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #000; /* Rahmen wird beim Fokus schwarz */
+        }
+
+        .captcha-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            padding: 0.8rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            background-color: #f9f9f9; /* Leichter Hintergrund für das Captcha-Feld */
+        }
+
+        .captcha-box .checkbox-icon {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #333;
+            border-radius: 3px;
+            margin-right: 0.8rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #333; /* Simuliert den aktivierten Zustand */
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .captcha-box .checkbox-icon svg {
+            fill: currentColor; /* Icon-Farbe wird von der Elternfarbe übernommen */
+            width: 14px;
+            height: 14px;
+        }
+
+        .captcha-text {
+            flex-grow: 1; /* Nimmt den verfügbaren Platz ein */
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .friendly-captcha-link {
+            font-size: 0.8rem;
+            color: #888;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .friendly-captcha-link svg {
+            width: 0.7rem;
+            height: 0.7rem;
+            stroke-width: 2;
+        }
+        .friendly-captcha-link:hover {
+            text-decoration: underline;
+        }
+
+        button.primary-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.2s ease; /* Sanfter Übergang beim Hover */
+        }
+
+        button.primary-button:hover {
+            background-color: #333;
+        }
+
+        button.primary-button svg {
+            width: 1rem;
+            height: 1rem;
+            stroke: currentColor; /* Icon-Farbe wird von der Textfarbe übernommen */
+            stroke-width: 2;
+        }
+
+        /* Hilfe-Bereich */
+        .help-section {
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border-top: 1px solid #eee; /* Trennlinie zum oberen Bereich */
+        }
+
+        .help-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column; /* Standardmäßig untereinander auf kleinen Bildschirmen */
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* Links ausgerichtet auf kleinen Bildschirmen */
+            gap: 1rem;
+        }
+
+        .contact-item .icon {
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .contact-item .icon svg {
+            width: 1.8rem;
+            height: 1.8rem;
+        }
+
+        .contact-item .text-content {
+            text-align: left;
+        }
+
+        .contact-item .text-content span {
+            display: block;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .contact-item .text-content a {
+            font-size: 1.1rem;
+            color: #000;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-item .text-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer-Bereich */
+        footer {
+            padding: 1.5rem;
+            text-align: center;
+            border-top: 1px solid #eee; /* Trennlinie zum oberen Bereich */
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap; /* Links können umbrechen, wenn der Platz nicht ausreicht */
+            justify-content: center;
+            gap: 1rem 1.5rem; /* Abstand zwischen den Links */
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links a {
+            color: #000;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: #555;
+        }
+
+        .legal-text {
+            font-size: 0.8rem;
+            color: #777;
+            line-height: 1.4;
+        }
+
+        /* Media Queries für Responsivität (ab 600px Bildschirmbreite) */
+        @media (min-width: 600px) {
+            .contact-info {
+                flex-direction: row; /* Nebeneinander auf größeren Bildschirmen */
+                justify-content: space-around; /* Verteilt die Elemente gleichmäßig */
+                align-items: flex-start;
+            }
+            .contact-item {
+                flex-direction: column; /* Icon und Text übereinander */
+                justify-content: flex-start;
+                align-items: center; /* Zentriert Icon und Text */
+                text-align: center;
+                flex: 1; /* Ermöglicht den Elementen, sich auszudehnen */
+                max-width: 50%; /* Verhindert, dass die Elemente zu breit werden */
+            }
+            .contact-item .text-content {
+                text-align: center; /* Text zentrieren */
+            }
+            .contact-item .text-content span {
+                margin-bottom: 0.2rem;
+            }
+        }
+
+        /* Allgemeine Link-Stile */
+        a {
+            color: inherit; /* Links erben die Textfarbe des Elternelements */
+            text-decoration: none; /* Standardmäßig keine Unterstreichung */
+        }
     </style>
-  </head>
-  <body>
-    <iframe
-      src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/proto/tOHGK7psXZgBOVoCVSrXAH/New-Login?page-id=620%3A17205&node-id=630-36009&viewport=571%2C1322%2C0.16&t=f3ODOn8GyjTQT7st-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=630%3A36009&show-proto-sidebar=1"
-      allowfullscreen
-    ></iframe>
-  </body>
+</head>
+<body>
+    <div class="page-wrapper">
+        <header>
+            <a href="#" class="logo">bonprix.</a>
+            <div class="shopping-bag">
+                <!-- Warenkorb-Icon (Feather Icons SVG) -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-bag">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                <span class="shopping-bag-count">1</span>
+            </div>
+        </header>
+
+        <main>
+            <h1>ANMELDEN ODER REGISTRIEREN</h1>
+            <p class="instruction">Nach Eingabe Deiner E-Mail-Adresse kannst Du Dich einloggen oder registrieren.</p>
+
+            <form>
+                <div class="form-group">
+                    <label for="email">E-Mail-Adresse</label>
+                    <input type="email" id="email" name="email" placeholder="">
+                </div>
+
+                <div class="captcha-box">
+                    <div class="checkbox-icon">
+                        <!-- Häkchen-Icon (Feather Icons SVG) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <span class="captcha-text">Ich bin ein Mensch</span>
+                    <a href="#" class="friendly-captcha-link">
+                        FriendlyCaptcha
+                        <!-- Externer Link-Icon (Feather Icons SVG) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </a>
+                </div>
+
+                <button type="submit" class="primary-button">
+                    <a href="passwort.html">WEITER</a>
+                    <!-- Pfeil-Rechts-Icon (Feather Icons SVG) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+        </main>
+
+        <section class="help-section">
+            <h2>Können wir Dir helfen?</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="icon">
+                        <!-- Telefon-Icon (Feather Icons SVG) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-phone">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-content">
+                        <span>Ruf uns an:</span>
+                        <a href="tel:0406462321">040 - 64 62 321</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">
+                        <!-- Mail-Icon (Feather Icons SVG) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <div class="text-content">
+                        <span>Schreib uns:</span>
+                        <a href="#">Kontaktformular öffnen</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-links">
+                <a href="#">AGB</a>
+                <a href="#">Impressum</a>
+                <a href="#">Datenschutzerklärung</a>
+                <a href="#">Cookie-Einstellungen</a>
+            </div>
+            <p class="legal-text">Preisangaben inkl. gesetzl. MwSt. und zzgl. Service- und Versandkosten</p>
+        </footer>
+    </div>
+</body>
 </html>
